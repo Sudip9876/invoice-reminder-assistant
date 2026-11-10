@@ -1,0 +1,23 @@
+# Python Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+pages/__pycache__/
+
+# Streamlit secrets (local API keys, etc.)
+.streamlit/secrets.toml
+
+# Temporary and log files
+*.log
+.pytest_cache/
+
+# OS metadata
+Thumbs.db
+.DS_Store
