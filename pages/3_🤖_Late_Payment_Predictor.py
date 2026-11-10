@@ -1,6 +1,6 @@
 """
-pages/3_🤖_Late_Payment_Predictor.py - Machine Learning Risk Radar & Simulator
-Provides machine learning predictions for late payers, feature explainability, and an interactive sandbox.
+pages/3_🤖_Late_Payment_Predictor.py - Machine Learning Risk Radar & Simulator (INR)
+Provides machine learning predictions for late payers, feature explainability, and an interactive sandbox in INR.
 """
 
 import streamlit as st
@@ -12,42 +12,41 @@ from datetime import date
 import database
 import ml_model
 
-st.set_page_config(page_title="Late Payment Predictor", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="Late Payment Predictor (INR)", page_icon="🤖", layout="wide")
 
 database.init_db()
 database.refresh_invoice_statuses()
 
-st.title("🤖 ML Late Payment Predictor & Risk Radar")
-st.caption("Predicts the likelihood of an invoice being paid late using a Scikit-Learn Random Forest model trained on customer payment history.")
+st.title("🤖 ML Late Payment Predictor & Risk Radar (INR)")
+st.caption("Predicts the likelihood of an invoice being paid late using a Scikit-Learn Random Forest model trained on customer settlement history.")
 
 # Educational Explainer for Novices
-with st.expander("🎓 How does this Machine Learning model work? (Click to learn)", expanded=False):
+with st.expander("🎓 How does this Machine Learning model work in Indian Rupees? (Click to learn)", expanded=False):
     st.markdown("""
-    ### 🧠 How Machine Learning Predicts Late Payers
+    ### 🧠 How Machine Learning Forecasts Late Payers
     In traditional invoicing, business owners only know a client is late **after** the due date passes. 
     By using Machine Learning, we can **forecast risk on the day the invoice is issued**:
     
     1. **Historical Delay (`avg_delay`)**: Does this client usually pay on time, or do they habitually drag payments by 2-3 weeks?
-    2. **Past Delinquency Rate (`late_rate`)**: What percentage of their historical invoices were paid past due?
-    3. **Relationship Depth (`total_past_invs`)**: Established long-term clients with 10+ paid invoices have more predictable payment habits than first-time clients.
-    4. **Invoice Ticket Size (`amount`)**: Large invoices (e.g. $10,000+) frequently encounter longer internal approval chains than smaller expenses ($500).
-    5. **Credit Terms (`term_days`)**: Net-45 or Net-60 terms give clients more room for payment delays than Net-15.
+    2. **Past Delinquency Rate (`late_rate`)**: What percentage of their historical invoices were settled past due?
+    3. **Relationship Depth (`total_past_invs`)**: Established long-term clients with multiple completed invoices have more predictable payment habits.
+    4. **Invoice Ticket Size (`amount`)**: Large orders in India (e.g. ₹2,50,000+) frequently encounter multi-level finance sign-offs and cash flow bottlenecks compared to small bills (₹15,000).
+    5. **Credit Terms (`term_days`)**: Net-45 or Net-60 terms provide wider delay corridors than Net-15.
     
-    The algorithm outputs a **calibrated probability (0% to 100%)** that categorizes each invoice into **Low Risk 🟢**, **Medium Risk 🟡**, or **High Risk 🔴**.
+    The algorithm outputs a **calibrated probability (0% to 100%)** categorizing each invoice into **Low Risk 🟢**, **Medium Risk 🟡**, or **High Risk 🔴**.
     """)
 
 tab_radar, tab_simulator, tab_model_health = st.tabs(["🎯 Live Risk Radar", "🎛️ What-If Simulator", "📊 Model Metrics & Training"])
 
-# TAB 1: Live Risk Radar across all open invoices
 with tab_radar:
     st.subheader("🎯 Risk Radar for Outstanding Invoices")
-    st.caption("Active invoices scored in real-time by the trained Machine Learning model.")
+    st.caption("Active unpaid invoices scored in real-time by the trained Machine Learning model.")
 
     invoices = database.get_all_invoices()
     unpaid = [i for i in invoices if i["status"] in ("Pending", "Overdue")]
 
     if not unpaid:
-        st.success("All invoices are currently marked as Paid! Create a new invoice to see the risk radar.")
+        st.info("ℹ️ No active unpaid invoices currently. Create a new invoice or click '🇮🇳 Load Demo' in the sidebar to test.")
     else:
         radar_items = []
         for inv in unpaid:
@@ -66,7 +65,6 @@ with tab_radar:
                 "recommended_action": risk["recommended_action"]
             })
 
-        # Sort with highest risk first
         radar_items.sort(key=lambda x: x["risk_probability"], reverse=True)
 
         for item in radar_items:
@@ -80,7 +78,7 @@ with tab_radar:
                         <span style="font-size: 1.1rem; font-weight: bold; color: {risk_color};">{item['risk_badge']} ({item['risk_probability']}%)</span>
                     </div>
                     <p style="margin: 0.3rem 0; color: #475569;">
-                        <strong>Amount:</strong> ${item['amount']:,.2f} &nbsp;|&nbsp; 
+                        <strong>Amount:</strong> {database.format_inr(item['amount'])} &nbsp;|&nbsp; 
                         <strong>Due Date:</strong> {item['due_date']} &nbsp;|&nbsp; 
                         <strong>Status:</strong> {item['status']}
                     </p>
@@ -94,22 +92,20 @@ with tab_radar:
                     for d in item["drivers"]:
                         st.markdown(f"• {d}")
 
-# TAB 2: Interactive What-If Simulator
 with tab_simulator:
-    st.subheader("🎛️ Interactive Late Payer Risk Simulator")
+    st.subheader("🎛️ Interactive Late Payer Risk Simulator (INR)")
     st.caption("Adjust client behavior sliders below to see how the Machine Learning model predicts risk in real time.")
 
     sim_col1, sim_col2 = st.columns([1.2, 1])
 
     with sim_col1:
-        st.markdown("##### ⚙️ Input Parameters")
+        st.markdown("##### ⚙️ Input Parameters (INR Context)")
         sim_avg_delay = st.slider("Historical Average Payment Delay (Days past due)", min_value=-5, max_value=45, value=15, help="Negative means early, positive means late.")
         sim_late_rate = st.slider("Past Late Payment Rate (%)", min_value=0, max_value=100, value=60, help="Percentage of past invoices paid after due date.")
-        sim_past_invs = st.number_input("Number of Past Completed Invoices", min_value=0, max_value=50, value=4)
-        sim_amount = st.slider("Invoice Amount ($)", min_value=100, max_value=25000, value=4500, step=250)
+        sim_past_invs = st.number_input("Number of Past Completed Invoices", min_value=0, max_value=50, value=5)
+        sim_amount = st.slider("Invoice Amount (₹)", min_value=10000, max_value=1500000, value=250000, step=10000, format="₹%d")
         sim_terms = st.selectbox("Credit Terms (Net Days)", [15, 30, 45, 60], index=1)
 
-    # Compute prediction on simulated parameters
     saved = ml_model.get_or_train_model()
     sim_df = pd.DataFrame([{
         "avg_delay": sim_avg_delay,
@@ -129,13 +125,15 @@ with tab_simulator:
                 sim_prob = float(probs[0][c1_idx])
         except Exception:
             sim_prob = 0.35
+    else:
+        # Heuristic fallback if empty dataset
+        sim_prob = min(0.95, (sim_late_rate / 100.0) * 0.7 + (0.2 if sim_avg_delay > 10 else 0.0) + (0.1 if sim_amount > 300000 else 0.0))
 
     sim_prob_pct = round(sim_prob * 100, 1)
 
     with sim_col2:
         st.markdown("##### 📈 Live Prediction Outcome")
         
-        # Gauge Chart
         fig_gauge = go.Figure(go.Indicator(
             mode="gauge+number",
             value=sim_prob_pct,
@@ -157,19 +155,18 @@ with tab_simulator:
             }
         ))
         fig_gauge.update_layout(height=260, margin=dict(l=20, r=20, t=40, b=20))
-        st.plotly_chart(fig_gauge, use_container_width=True)
+        st.plotly_chart(fig_gauge, width="stretch")
 
         if sim_prob_pct >= 65:
             st.error(f"🔴 **HIGH RISK ({sim_prob_pct}%)**: Highly likely to experience delayed settlement.")
-            st.markdown("**Suggested Action:** Schedule an automated reminder 3 days before due date and request an advance deposit next cycle.")
+            st.markdown("**Suggested Action:** Schedule an automated reminder 3 days before due date via WhatsApp and request advance partial payment on future work orders.")
         elif sim_prob_pct >= 35:
             st.warning(f"🟡 **MEDIUM RISK ({sim_prob_pct}%)**: Moderate delay probability.")
-            st.markdown("**Suggested Action:** Send a polite WhatsApp reminder on the due date morning.")
+            st.markdown("**Suggested Action:** Send a polite WhatsApp reminder on the due date morning with UPI QR/link.")
         else:
             st.success(f"🟢 **LOW RISK ({sim_prob_pct}%)**: Punctual payment expected.")
-            st.markdown("**Suggested Action:** Follow standard automated monthly billing.")
+            st.markdown("**Suggested Action:** Standard billing cycle. Client is financially disciplined.")
 
-# TAB 3: Model Health & Retraining
 with tab_model_health:
     st.subheader("📊 Model Architecture, Metrics & Retraining")
     st.caption("Evaluate how well the Random Forest model performs and retrain it on updated payment logs.")
@@ -178,7 +175,7 @@ with tab_model_health:
     metrics = model_data.get("metrics", {}) if model_data else {}
 
     m1, m2, m3, m4, m5 = st.columns(5)
-    m1.metric("Training Samples", f"{metrics.get('samples', 0)} payments")
+    m1.metric("Training Samples", f"{metrics.get('samples', 0)} settlements")
     m2.metric("Accuracy", f"{metrics.get('accuracy', 0)}%")
     m3.metric("Precision", f"{metrics.get('precision', 0)}%")
     m4.metric("Recall", f"{metrics.get('recall', 0)}%")
@@ -197,7 +194,7 @@ with tab_model_health:
             friendly_names = {
                 "avg_delay": "Past Average Delay",
                 "late_rate": "Historical Overdue Rate",
-                "amount": "Invoice Amount",
+                "amount": "Invoice Amount (₹)",
                 "total_past_invs": "Client Invoices Count",
                 "term_days": "Payment Terms"
             }
@@ -216,7 +213,9 @@ with tab_model_health:
                 color_continuous_scale="Blues"
             )
             fig_fi.update_layout(height=280, showlegend=False, margin=dict(l=10, r=10, t=20, b=20))
-            st.plotly_chart(fig_fi, use_container_width=True)
+            st.plotly_chart(fig_fi, width="stretch")
+        else:
+            st.info("Train the model with at least 5 completed payment records to view feature importances.")
 
     with col_retrain:
         st.subheader("🔄 Retrain ML Model")

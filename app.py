@@ -1,6 +1,6 @@
 """
-app.py - Invoice & Payment-Reminder Assistant
-Main entrypoint and navigation hub for small business cash-flow & payment tracking.
+app.py - Invoice & Payment-Reminder Assistant (INR & CRM Edition)
+Main entrypoint and navigation hub for small business cash-flow, CRM follow-ups & payment tracking.
 """
 
 import streamlit as st
@@ -10,15 +10,14 @@ import ml_model
 
 # Page configuration
 st.set_page_config(
-    page_title="Invoice & Payment-Reminder Assistant",
+    page_title="Invoice & Payment-Reminder Assistant (INR)",
     page_icon="💼",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Initialize database and seed demo data on first launch
+# Initialize database schema
 database.init_db()
-database.seed_demo_data_if_empty()
 database.refresh_invoice_statuses()
 
 # Custom Styling
@@ -42,42 +41,22 @@ st.markdown("""
         border-left: 4px solid #3B82F6;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .feature-card {
-        background-color: #ffffff;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 1.2rem;
-        height: 100%;
-        transition: transform 0.15s ease-in-out;
-    }
-    .feature-card:hover {
-        border-color: #3B82F6;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    .badge-urgent {
-        background-color: #FEE2E2;
-        color: #991B1B;
-        padding: 0.2rem 0.6rem;
-        border-radius: 9999px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
 </style>
 """, unsafe_allow_html=True)
 
 # Sidebar
 with st.sidebar:
     st.image("https://img.icons8.com/isometric/100/bill.png", width=60)
-    st.title("Invoice Flow AI")
-    st.caption("AI-Powered Receivables & Reminders")
+    st.title("Invoice Flow AI (₹)")
+    st.caption("AI Invoicing, CRM Follow-ups & Reminders")
     st.divider()
 
     st.markdown("**Navigation Pages:**")
     st.markdown("1. 📊 **Executive Dashboard**")
     st.markdown("2. 📄 **Track Invoices**")
     st.markdown("3. 🤖 **ML Late Payer Predictor**")
-    st.markdown("4. 💬 **Smart Reminder Drafter**")
-    st.markdown("5. 👥 **Customer Directory**")
+    st.markdown("4. 💬 **Smart Reminders & CRM Log**")
+    st.markdown("5. 👥 **Customer CRM & Scorecards**")
     st.markdown("6. 🎓 **Novice Guide (Learn Step-by-Step)**")
     st.divider()
 
@@ -85,15 +64,33 @@ with st.sidebar:
     all_invoices = database.get_all_invoices()
     overdue_count = sum(1 for i in all_invoices if i["status"] == "Overdue")
     pending_count = sum(1 for i in all_invoices if i["status"] == "Pending")
+    crm_logs = database.get_crm_interactions()
     
-    st.caption(f"⚡ **Quick Status:**")
+    st.caption("⚡ **Live Status:**")
+    st.caption(f"• Currency: **INR (₹)**")
     st.caption(f"• Overdue Invoices: **{overdue_count}**")
     st.caption(f"• Pending Invoices: **{pending_count}**")
-    st.caption(f"• System Date: **{datetime.date.today()}**")
+    st.caption(f"• CRM Interactions: **{len(crm_logs)} logged**")
+    st.divider()
+
+    # Database Demo Data Management (User requested feature!)
+    st.markdown("🛠️ **Data Management:**")
+    col_d1, col_d2 = st.columns(2)
+    with col_d1:
+        if st.button("🧹 Clear All", help="Wipes all invoices and demo records to start with a blank database"):
+            database.clear_all_data()
+            st.success("Database wiped clean!")
+            st.rerun()
+    with col_d2:
+        if st.button("🇮🇳 Load Demo", help="Populates realistic Indian SME records in INR"):
+            database.seed_indian_demo_data()
+            ml_model.train_model()
+            st.success("Loaded Indian demo data in INR!")
+            st.rerun()
 
 # Hero Section
 st.markdown('<div class="main-header">💼 Invoice & Payment-Reminder Assistant</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Automate accounts receivable, forecast cash-flow risks with Machine Learning, and draft polite, high-converting WhatsApp & Email reminders.</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-header">Automate accounts receivable, manage CRM communication logs, forecast late-payer risks with Machine Learning, and draft polite WhatsApp & Email reminders in Indian Rupees (₹).</div>', unsafe_allow_html=True)
 
 # Top KPI Metric Cards
 col1, col2, col3, col4 = st.columns(4)
@@ -104,28 +101,28 @@ total_paid = sum(i["amount"] for i in all_invoices if i["status"] == "Paid")
 active_clients = len(database.get_all_customers())
 
 with col1:
-    st.metric("Total Outstanding", f"${total_outstanding:,.2f}", delta=f"{len([i for i in all_invoices if i['status'] != 'Paid'])} open invoices")
+    st.metric("Total Outstanding", database.format_inr(total_outstanding), delta=f"{len([i for i in all_invoices if i['status'] != 'Paid'])} open invoices")
 
 with col2:
-    st.metric("Overdue Balance", f"${total_overdue:,.2f}", delta=f"{overdue_count} invoices", delta_color="inverse")
+    st.metric("Overdue Balance", database.format_inr(total_overdue), delta=f"{overdue_count} overdue", delta_color="inverse")
 
 with col3:
-    st.metric("Collected Revenue", f"${total_paid:,.2f}", delta="Historical total")
+    st.metric("Collected Revenue", database.format_inr(total_paid), delta="Realized in bank")
 
 with col4:
-    st.metric("Active Clients", f"{active_clients}", delta="In database")
+    st.metric("Active Clients", f"{active_clients}", delta=f"{len(crm_logs)} CRM notes logged")
 
 st.markdown("---")
 
-# Feature Tour for the Novice User
-st.subheader("🧭 What would you like to do?")
+# Feature Tour for Novice User
+st.subheader("🧭 Core System Capabilities")
 
 fcol1, fcol2, fcol3 = st.columns(3)
 
 with fcol1:
     st.markdown("""
     ### 📊 1. Receivables Dashboard
-    Monitor business cash-flow, invoice aging buckets (0-15d, 16-30d, 30d+), and collection trends.
+    Monitor business cash flow, aging buckets (0-15d, 16-30d, 30d+), and collection trends in Indian Rupees.
     
     👉 *Go to **Dashboard** in the sidebar.*
     """)
@@ -133,15 +130,15 @@ with fcol1:
 with fcol2:
     st.markdown("""
     ### 🤖 2. ML Late Payer Predictor
-    Use our trained Scikit-Learn model to automatically scan pending invoices and flag high-risk late payers before they become overdue.
+    Use our Scikit-Learn Random Forest model to automatically scan pending invoices and flag likely payment delays before the due date.
     
     👉 *Go to **Late Payment Predictor**.*
     """)
 
 with fcol3:
     st.markdown("""
-    ### 💬 3. Smart Reminders
-    Generate ready-to-send polite WhatsApp and Email messages in 4 adjustable tones, with 1-click launch links.
+    ### 💬 3. Smart Reminders & CRM
+    Generate polite WhatsApp & Email reminders featuring your **UPI ID & Bank NEFT/RTGS details**, and log follow-ups to the CRM timeline.
     
     👉 *Go to **Smart Reminders**.*
     """)
@@ -149,8 +146,8 @@ with fcol3:
 st.markdown("---")
 
 # Quick Action Center: High Priority Invoices Needing Attention
-st.subheader("⚡ Action Center: High-Priority Invoices")
-st.caption("These invoices are either already overdue or flagged by our ML model as high risk of late payment.")
+st.subheader("⚡ Action Center: High-Priority Invoices (INR)")
+st.caption("Active invoices that are either already overdue or flagged by our ML model as high risk of late payment.")
 
 priority_invoices = []
 for inv in all_invoices:
@@ -160,7 +157,7 @@ for inv in all_invoices:
             priority_invoices.append({
                 "Invoice #": inv["invoice_number"],
                 "Customer": f"{inv['customer_name']} ({inv['customer_company']})",
-                "Amount": f"${inv['amount']:,.2f}",
+                "Amount": database.format_inr(inv["amount"]),
                 "Due Date": inv["due_date"],
                 "Status": "⚠️ Overdue" if inv["status"] == "Overdue" else "⏳ Pending",
                 "ML Risk Score": f"{risk['risk_probability']}% ({risk['risk_level']})",
@@ -168,17 +165,14 @@ for inv in all_invoices:
             })
 
 if priority_invoices:
-    st.dataframe(priority_invoices, use_container_width=True)
+    st.dataframe(priority_invoices, width='stretch')
 else:
     st.success("🎉 All caught up! No urgent overdue or high-risk invoices currently.")
 
 # Beginner learning note
-with st.expander("💡 Novice Tip: How this application is structured"):
+with st.expander("💡 Novice Tip: Managing Demo Data & Indian Rupee Context"):
     st.markdown("""
-    This app is built as a **modular multi-page application**:
-    - **`database.py`**: SQLite database storing customers, invoices, and completed payment logs.
-    - **`ml_model.py`**: A Machine Learning Random Forest classifier that learns each customer's past payment delays and predicts future risks.
-    - **`reminder_engine.py`**: Generates tone-adjusted WhatsApp (`wa.me`) and Email (`mailto:`) links so you can send reminders with a single click.
-    - **`pages/`**: Each page in the sidebar is an independent module dedicated to a specific part of your workflow.
-    - Check out the **🎓 Novice Guide** page in the sidebar for an in-depth breakdown of how everything works!
+    - **Clean Slate**: Use the **'🧹 Clear All'** button in the sidebar anytime you want to wipe all demo records and start inputting your own real invoices and clients.
+    - **Demo Sample**: Click **'🇮🇳 Load Demo'** to instantly repopulate realistic Indian SME clients with amounts in INR (₹), GSTINs, and UPI IDs for client presentations or portfolio testing.
+    - **Indian Compliance & CRM**: Invoices, customer profiles, and reminder drafts are calibrated for Indian businesses, with support for **GSTIN**, **UPI ID**, **Bank IFSC/RTGS**, and **Credit Limits**.
     """)

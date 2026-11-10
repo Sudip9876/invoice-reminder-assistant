@@ -1,30 +1,28 @@
 """
-pages/6_🎓_Novice_Step_by_Step_Guide.py - Step-by-Step Novice Learning Guide
-A complete beginner guide explaining every layer of the application: database, ML, reminders, and UI.
+pages/6_🎓_Novice_Step_by_Step_Guide.py - Step-by-Step Novice Learning Guide (INR & CRM)
+A complete beginner guide explaining every layer of the application: database, ML, CRM, reminders, and UI in INR.
 """
 
 import streamlit as st
 
-st.set_page_config(page_title="Novice Step-by-Step Guide", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="Novice Step-by-Step Guide (INR)", page_icon="🎓", layout="wide")
 
-st.title("🎓 Novice Guide: Building & Understanding the App Step-by-Step")
-st.caption("A beginner-friendly masterclass explaining how every piece of this software fits together.")
+st.title("🎓 Novice Guide: Building & Understanding the App (INR & CRM)")
+st.caption("A beginner-friendly masterclass explaining how every piece of this software fits together in an Indian business context.")
 
 st.markdown("""
 Welcome! Even if you have never built a Machine Learning system or a multi-page web dashboard before, 
 this guide breaks down **every single concept into simple, digestible steps**.
 """)
 
-# Step Navigation Tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🏗️ 1. Project Architecture",
-    "🗄️ 2. Database & Data Model",
-    "🤖 3. The ML Model Explained",
-    "💬 4. WhatsApp & Email Engine",
+    "🗄️ 2. Database & CRM Model",
+    "🤖 3. The ML Model in INR",
+    "💬 4. WhatsApp, UPI & Reminders",
     "🚀 5. How to Run & Extend"
 ])
 
-# STEP 1: ARCHITECTURE
 with tab1:
     st.subheader("🏗️ Step 1: How the Multi-Page Application Works")
     st.markdown("""
@@ -33,151 +31,118 @@ with tab1:
 
     Here is the exact structure of your project:
     ```
-    Invoice_app/
+    Dashboard_1-Invoice_App/
     │
-    ├── app.py                      # Main homepage & central navigation hub
+    ├── app.py                      # Main landing hub & CRM action center
     │
     ├── pages/                      # Multi-page directory (Streamlit auto-discovers these!)
-    │   ├── 1_📊_Dashboard.py        # Executive receivables KPIs, aging buckets & risk charts
+    │   ├── 1_📊_Dashboard.py        # Executive receivables KPIs, aging buckets & risk charts (₹)
     │   ├── 2_📄_Invoices.py         # Invoicing table, create invoices & mark payments
-    │   ├── 3_🤖_Late_Payment_Predictor.py  # ML risk radar, explanations & simulator
-    │   ├── 4_💬_Smart_Reminders.py   # Tone-adjusted WhatsApp (wa.me) & Email drafter
-    │   ├── 5_👥_Customers.py        # Customer directory & reliability scorecards
+    │   ├── 3_🤖_Late_Payment_Predictor.py  # ML risk radar, explanations & simulator in INR
+    │   ├── 4_💬_Smart_Reminders.py   # Tone-adjusted WhatsApp (wa.me), UPI & CRM Logger
+    │   ├── 5_👥_Customers.py        # Customer CRM profiles, GSTIN, credit limits & timeline
     │   └── 6_🎓_Novice_Guide.py     # This step-by-step interactive learning guide
     │
-    ├── database.py                 # SQLite database storage & query helpers
-    ├── ml_model.py                 # Scikit-Learn Random Forest late-payer classifier
-    ├── reminder_engine.py          # Message templates, tone rules & URL deep-links
+    ├── database.py                 # SQLite database storage & CRM query helpers
+    ├── ml_model.py                 # Scikit-Learn Random Forest late-payer classifier (INR)
+    ├── reminder_engine.py          # Message templates, UPI formatting & URL deep-links
     ├── invoicing.db                # The local SQLite database file
     └── late_payer_model.joblib     # Serialized trained machine learning model
     ```
 
     #### Why Streamlit?
-    - **Zero Web Bloat**: You don't need to configure React, Webpack, Node proxies, or complex CSS.
-    - **Python Native**: Your data analysis, Machine Learning model, and user interface speak the exact same language (Python).
-    - **Multi-Page by Convention**: Adding a new page is as easy as creating a file in `pages/`!
+    - **Active Python Backend**: Runs real Python code on a live cloud server.
+    - **100% Free**: Hostable on Streamlit Community Cloud without credit cards or subscriptions.
+    - **Instant Multi-Page Navigation**: Adding a `.py` file to `pages/` automatically makes it a new page in the navigation bar!
     """)
 
-# STEP 2: DATABASE & DATA MODEL
 with tab2:
-    st.subheader("🗄️ Step 2: The Database & Relational Data Model")
+    st.subheader("🗄️ Step 2: The Database & CRM Data Model")
     st.markdown("""
     All data is stored inside a lightweight, serverless SQLite database (`invoicing.db`). 
-    SQLite requires **no configuration, no separate database server**, and stores everything in a single portable file.
-
-    Our database uses **3 interconnected tables**:
+    Our system uses **4 interconnected relational tables**:
     """)
 
     st.markdown("""
     | Table | What it Stores | Why it Matters |
     | :--- | :--- | :--- |
-    | `customers` | Client name, company, email, phone number | The central contact directory for reminders |
-    | `invoices` | Invoice number, issue date, due date, amount, status (`Pending`, `Overdue`, `Paid`) | The active ledger of money owed to your business |
-    | `payment_history` | Historical payments, actual delay in days, and a boolean flag (`was_late: 0 or 1`) | **The training dataset for our Machine Learning algorithm!** |
+    | `customers` | Name, company, email, WhatsApp phone, GSTIN, Credit Limit (₹), UPI ID, tags | Central CRM directory for client relationship management |
+    | `invoices` | Invoice number, issue date, due date, amount in INR (₹), status (`Pending`, `Overdue`, `Paid`) | Active ledger of money owed to your business |
+    | `payment_history` | Historical payment dates, delay in days, and flag (`was_late: 0 or 1`) | **Training dataset for the Machine Learning algorithm!** |
+    | `crm_interactions`| Outreach channel (WhatsApp, Email, Call), notes, and **Promised Payment Dates** | Complete communication trail so follow-ups never slip through the cracks |
     """)
 
     st.markdown("""
-    #### The Closed-Loop Feedback Cycle:
-    1. You issue an invoice (`invoices` table).
-    2. When the customer settles, you click **"Mark as Paid"** on the Invoices page.
-    3. The system calculates: `delay_days = payment_date - due_date`.
-    4. If `delay_days > 5`, it sets `was_late = 1`.
-    5. This record is permanently appended to `payment_history`.
-    6. When you click **"Retrain Model"**, the AI learns from this new transaction!
+    #### Starting with a Clean Slate or Testing with Demo Data:
+    - **Wipe All Demo Data**: Click **'🧹 Clear All'** in the sidebar at any time to start completely fresh for your real clients.
+    - **Load Sample Data**: Click **'🇮🇳 Load Demo'** to load realistic Indian SME records in INR for presentations or portfolio demonstrations.
     """)
 
-# STEP 3: THE ML MODEL EXPLAINED
 with tab3:
     st.subheader("🤖 Step 3: Machine Learning Demystified for Beginners")
     st.markdown("""
-    ### What is Machine Learning actually doing here?
-    In traditional programming, you write fixed `if/else` rules:
+    ### What is Machine Learning doing here?
+    In traditional programming, you write rigid rules:
     ```python
-    # ❌ Rigid Traditional Rule:
-    if customer_delay > 10:
+    # ❌ Rigid Rule:
+    if client_delayed_before:
         risk = "High"
     ```
-    However, real business risk depends on **multiple interacting factors**! 
-    For example:
-    - What if a customer pays 5 days late, but this is a **huge $20,000 invoice** with **Net-60 terms**?
-    - What if a customer was late once, but has paid on time for **10 consecutive invoices**?
+    In reality, payment risk depends on **multiple interacting factors**:
+    - Has this client settled 10 invoices on time and delayed only once?
+    - Is this an unusually large order (e.g. ₹5,00,000) that requires board approval?
+    - Are the payment terms Net-15 or Net-60?
 
-    ### Enter Random Forest Classification:
-    Our Machine Learning model (`RandomForestClassifier` from Scikit-Learn) builds a **forest of decision trees**. 
-    Each tree examines combinations of 5 features:
-    
-    1. **`avg_delay`**: Historical average days the client takes to pay after the due date.
+    ### Random Forest Classification:
+    Our Machine Learning model builds an ensemble of decision trees analyzing 5 key features:
+    1. **`avg_delay`**: Historical average days the client takes to pay past the due date.
     2. **`late_rate`**: Percentage of past invoices that were overdue.
-    3. **`total_past_invs`**: How many invoices we have completed with this client.
-    4. **`amount`**: The dollar amount of the current invoice.
-    5. **`term_days`**: The credit window (e.g. Net 15 vs Net 45).
+    3. **`total_past_invs`**: Relationship depth (number of completed invoices).
+    4. **`amount`**: The invoice total in Indian Rupees (₹).
+    5. **`term_days`**: The agreed credit window (Net 15 vs Net 45).
 
-    #### How Probability Becomes Actionable:
+    The model outputs an exact probability (0% to 100%) and categorizes the invoice into:
+    - 🟢 **0% to 34% (Low Risk)**: Standard billing workflow.
+    - 🟡 **35% to 64% (Medium Risk)**: Send a gentle morning check-in on the due date.
+    - 🔴 **65% to 100% (High Risk)**: Proactively follow up 3 days before due date via WhatsApp.
     """)
 
-    st.markdown("""
-    - 🟢 **0% to 34% (Low Risk)**: Standard billing. Do not pester the customer.
-    - 🟡 **35% to 64% (Medium Risk)**: Send a gentle polite check-in on the due date morning.
-    - 🔴 **65% to 100% (High Risk)**: Proactively reach out 3 days before the due date via WhatsApp.
-    """)
-
-# STEP 4: WHATSAPP & EMAIL ENGINE
 with tab4:
-    st.subheader("💬 Step 4: How the 1-Click Reminder Engine Works")
+    st.subheader("💬 Step 4: WhatsApp, UPI & The 1-Click Reminder Engine")
     st.markdown("""
-    Small business owners hate following up on payments because it feels awkward or aggressive. 
-    Our reminder engine solves this using **Tone Calibration** and **Direct Deep-Linking**.
+    In India, over 80% of business communication happens over WhatsApp, and payments are settled via UPI or direct NEFT/IMPS bank transfer. 
+    Our reminder engine bridges both channels seamlessly:
 
     ### 1. How WhatsApp 1-Click Works (`wa.me`)
-    WhatsApp provides a global URL scheme. When formatted correctly:
     ```
-    https://wa.me/<country_code><phone_number>?text=<url_encoded_message>
+    https://wa.me/919876543210?text=Hi%20Aarav...%20UPI%20ID:%20bioron@upi
     ```
-    When you click our **"🟢 Open in WhatsApp"** button:
-    1. The app sanitizes the phone number (removes spaces, dashes).
-    2. It URL-encodes special characters (spaces become `%20`, newlines become `%0A`).
-    3. It launches WhatsApp Web (on desktop) or the WhatsApp Mobile App with the message already filled in!
-    4. You only have to hit **Send**.
+    Clicking **"🟢 Open in WhatsApp"** opens WhatsApp Web or the WhatsApp Desktop App with:
+    - Clean formatting using WhatsApp bold text (`*Invoice #...*`, `*Amount:* ₹1,65,000`).
+    - Your **Business UPI ID** and **Bank Account & IFSC code** pre-filled.
+    - Zero awkwardness: polite, relationship-preserving wording.
 
-    ### 2. How Email 1-Click Works (`mailto:`)
-    Similarly, modern operating systems support the `mailto:` protocol:
-    ```
-    mailto:client@example.com?subject=Invoice%20Reminder&body=Dear%20Client...
-    ```
-    Clicking **"✉️ Open in Email Client"** instantly opens Outlook, Apple Mail, or Thunderbird with the subject line, customer email, and body text pre-populated.
-
-    ### 3. The 4 Tone Presets:
-    - **Gentle / Friendly**: Emphasizes partnership and warm relationships.
-    - **Professional / Standard**: Factual, formal, summary of invoice and due date.
-    - **Firm / Assertive**: Highlights service continuation and requested remittance date.
-    - **Urgent / Final Notice**: For severe overdue invoices or chronic defaulters.
+    ### 2. CRM Activity Logging
+    Every time you draft a reminder or speak with a customer, click **"Save Activity to Customer CRM Timeline"**:
+    - Record payment commitments (e.g. *"Client promised to transfer ₹50,000 by Friday via RTGS"*).
+    - Track communication history directly inside their client profile!
     """)
 
-# STEP 5: HOW TO RUN & EXTEND
 with tab5:
-    st.subheader("🚀 Step 5: How to Run, Test, and Extend the Project")
+    st.subheader("🚀 Step 5: How to Deploy to GitHub & Streamlit Cloud (100% Free)")
     st.markdown("""
-    ### How to Run this Application Anytime
-    Open your terminal in this project folder and run:
-    ```bash
-    # 1. Activate the virtual environment
-    .venv\\Scripts\\activate
-
-    # 2. Run the Streamlit web app
-    streamlit run app.py
+    ### How to Push to GitHub:
+    ```powershell
+    cd "c:\\Users\\SUDIP ROY\\OneDrive\\Documents\\Bioron Education\\ai-products\\Invoice_app\\Dashboard_1-Invoice_App"
+    git add .
+    git commit -m "Convert to INR currency, add CRM features, and clean database options"
+    git push -u origin main
     ```
-    *(We also created a 1-click startup script: simply double-click `run.bat` in Windows Explorer!)*
 
-    ### How to Extend this Project for Production
-    Now that your core application is complete, here are 3 exciting ways to extend it:
-    
-    1. **Online Payment Gateway (Stripe / Razorpay)**:
-       - Generate dynamic payment links and insert them directly into the reminder text.
-       - Use a webhook to automatically mark invoices as Paid when payment succeeds!
-    
-    2. **Automated WhatsApp via Meta Cloud API / Twilio**:
-       - Instead of clicking the link manually, you can set up a scheduled background cron job to send reminders automatically.
-    
-    3. **Cloud Deployment**:
-       - You can deploy this repository to **Streamlit Community Cloud** or **Railway** for free so you can access your dashboard from your smartphone anywhere in the world!
+    ### How to Deploy on Streamlit Community Cloud:
+    1. Visit [**share.streamlit.io**](https://share.streamlit.io/) and log in with your GitHub account.
+    2. Click **"New App"** and select repository `Sudip9876/invoice-reminder-assistant`.
+    3. Choose branch `main` and main file `app.py`.
+    4. Click **"Deploy"**!
+    5. Your app is live with an active Python backend, real database, and Scikit-Learn ML predictions!
     """)

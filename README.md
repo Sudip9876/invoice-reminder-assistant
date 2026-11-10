@@ -1,70 +1,74 @@
-# 💼 Invoice & Payment-Reminder Assistant (Multi-Page AI App)
+# 💼 Invoice & Payment-Reminder Assistant (INR & CRM Edition)
 
-An intelligent, multi-page web application designed for small businesses and freelancers to **track invoices**, **forecast late payment risks using Machine Learning**, and **draft tone-calibrated WhatsApp & Email reminders** with 1-click delivery links.
+An intelligent, multi-page web application designed for Indian businesses, agencies, and freelancers to **track invoices**, **manage CRM client relationships**, **forecast late-payment risks using Machine Learning**, and **draft tone-calibrated WhatsApp & Email reminders** featuring UPI and direct bank transfer details.
 
 ---
 
 ## 🌟 Key Features
 
-1. **📊 Executive Receivables Dashboard**:
-   - High-level KPIs: Total Invoiced, Outstanding Balance, Overdue Balance, Collection Efficiency Rate, and At-Risk Capital.
-   - **Aging Buckets**: Automatically segments unpaid capital into *Current*, *1-15 Days*, *16-30 Days*, and *30+ Days (Critical)* intervals with interactive Plotly visual charts.
-   - **Client Exposure Breakdown**: Identifies top debtors and critical accounts requiring immediate follow-up.
+1. **📊 Executive Receivables Dashboard (INR)**:
+   - High-level KPIs in Indian Rupees (₹): Total Invoiced, Outstanding Balance, Overdue Balance, Collection Efficiency Rate, and At-Risk Capital.
+   - **Aging Intervals**: Automatically segments unpaid capital into *Current*, *1-15 Days*, *16-30 Days*, and *30+ Days (Critical)* intervals with interactive Plotly visual charts.
+   - **Client Credit Exposure Breakdown**: Identifies top debtors and critical accounts requiring immediate follow-up.
 
-2. **📄 Complete Invoice Lifecycle Management**:
-   - Track invoice number, customer company, issue date, due date, terms (Net 15/30/45/60), and amount.
+2. **👥 Comprehensive Customer CRM & Credit Management**:
+   - Centralized client database with **GSTIN (GST Number)**, contact person, WhatsApp phone, and email.
+   - **Credit Limit & Real-time Utilization Meter**: Set an approved credit limit in INR (e.g. ₹2,00,000) and track live credit utilization percentage with visual progress bars.
+   - **CRM Communication Timeline**: Audit trails of all client outreach (WhatsApp reminders, email notices, phone calls, and meetings).
+   - **Payment Promise Tracker**: Log and track exact dates promised by customers for NEFT/IMPS/UPI clearance.
+
+3. **📄 Complete Tax Invoice Lifecycle (₹)**:
+   - Issue GST tax invoices with terms (Net 15/30/45/60) and amounts in INR.
    - Instant search and filters by status (`Pending`, `Overdue`, `Paid`) and ML risk tier.
-   - **"Record Payment" Settlement Flow**: Automatically calculates payment delay in days and records it in the historical training set so the AI continuously learns.
-   - **CSV Export**: 1-click download of all invoices for accounting or spreadsheet reconciliation.
+   - **"Record Payment" Settlement Flow**: Automatically calculates payment delay in days and records it in both the historical ML training set and the CRM activity ledger.
+   - **CSV Export**: 1-click download of all invoices for accounting or GST reconciliation.
 
-3. **🤖 Machine Learning Late-Payer Predictor**:
+4. **🤖 Machine Learning Late-Payer Predictor (INR)**:
    - Trained on historical customer settlement habits using a Scikit-Learn **Random Forest Classifier**.
-   - Forecasts risk on the day an invoice is created:
+   - Forecasts delinquency risk on the day an invoice is created:
      - 🟢 **Low Risk (0 - 34%)**: Reliable client, standard billing.
      - 🟡 **Medium Risk (35 - 64%)**: Moderate delay chance, friendly check-in recommended.
      - 🔴 **High Risk (65 - 100%)**: Chronic delay expected, proactive outreach required.
-   - **Explainable AI**: Highlights exact drivers behind every prediction (e.g., *"Historical delay averages +28 days"*, *"Invoice amount ($5,500) exceeds typical approvals"*).
-   - **Interactive What-If Simulator**: Adjust delay, past overdue rate, and invoice amounts with real-time gauge feedback.
+   - **Explainable AI**: Highlights exact drivers behind every prediction (e.g., *"Historical delay averages +28 days"*, *"High ticket invoice (₹3,80,000) requires multi-tier finance approval"*).
+   - **Interactive What-If Simulator**: Adjust delay, past overdue rate, and invoice amounts (₹10,000 to ₹15,00,000) with real-time gauge feedback.
    - **1-Click Model Retraining**: Fits on new payment records with reported accuracy and feature importance rankings.
 
-4. **💬 Smart WhatsApp & Email Reminder Drafter**:
+5. **💬 Smart WhatsApp & Email Reminder Drafter with UPI & Banking Details**:
    - **4 Calibrated Tones**:
      - *Gentle / Friendly* (warm, relationship-preserving check-in)
      - *Professional / Standard* (clear, objective business notice)
      - *Firm / Assertive* (direct overdue notification with service continuity notice)
-     - *Urgent / Final Notice* (formal warning outlining late fees/escalation)
+     - *Urgent / Final Notice* (formal warning outlining late interest charges or credit hold)
+   - **UPI & Bank Transfer Integration**: Formats drafts with your **Business UPI ID** (e.g. `bioron@okhdfcbank`) and **Bank Account & IFSC code**.
    - **1-Click WhatsApp Launch**: Generates direct `https://wa.me/...` deep-links that open WhatsApp Web or Desktop with the message pre-filled.
    - **1-Click Email Launch**: Generates `mailto:...` links opening Outlook, Apple Mail, or Thunderbird with subject and body populated.
+   - **Log to CRM**: 1-click button to log the outreach to the customer's CRM history.
 
-5. **👥 Customer Directory & Reliability Scorecards**:
-   - Complete client roster with contact info (email, WhatsApp phone with country code).
-   - Star reliability ratings based on historical settlement records (e.g. `⭐⭐⭐⭐⭐ Perfect Payer` vs `⚠️ Chronic Late Payer`).
-   - Deep-dive payment history audit log for every client.
-
-6. **🎓 Interactive Novice Step-by-Step Guide**:
-   - Dedicated in-app guide explaining the architecture, the database schema, how the ML model works under the hood, and how to extend it.
+6. **🧹 Flexible Data Management (Clean Slate vs Demo)**:
+   - **Wipe All Demo Data**: Click **'🧹 Clear All'** in the sidebar at any time to start completely fresh for your real business.
+   - **Load Indian Demo Data**: Click **'🇮🇳 Load Demo'** to load realistic Indian SME records in INR for presentations or portfolio demonstrations.
 
 ---
 
 ## 🗂️ Project Structure
 
 ```
-Invoice_app/
+Dashboard_1-Invoice_App/
 │
-├── app.py                             # Main landing page & navigation hub
+├── app.py                             # Main landing page & CRM action hub
 │
 ├── pages/                             # Multi-page application modules
-│   ├── 1_📊_Dashboard.py              # Executive financial & aging dashboard
+│   ├── 1_📊_Dashboard.py              # Executive financial & aging dashboard (₹)
 │   ├── 2_📄_Invoices.py               # Invoices table, new invoice form & payment logger
-│   ├── 3_🤖_Late_Payment_Predictor.py # ML risk radar, what-if simulator & retraining
-│   ├── 4_💬_Smart_Reminders.py        # Tone-calibrated WhatsApp & Email drafter
-│   ├── 5_👥_Customers.py              # Customer directory & reliability cards
+│   ├── 3_🤖_Late_Payment_Predictor.py # ML risk radar, what-if simulator & retraining (INR)
+│   ├── 4_💬_Smart_Reminders.py        # Tone-calibrated WhatsApp (wa.me), UPI & CRM Logger
+│   ├── 5_👥_Customers.py              # Customer CRM profiles, GSTIN, credit limits & timeline
 │   └── 6_🎓_Novice_Step_by_Step_Guide.py # Beginner tutorial & architecture breakdown
 │
-├── database.py                        # SQLite database engine, tables & seed data
+├── database.py                        # SQLite database engine, CRM tables & seed data
 ├── ml_model.py                        # Scikit-learn Random Forest model & explainability
-├── reminder_engine.py                 # Tone message generators & deep-linking URLs
-├── invoicing.db                       # Local SQLite database (pre-seeded with 8 clients)
+├── reminder_engine.py                 # Tone message generators, UPI & deep-linking URLs
+├── invoicing.db                       # Local SQLite database
 ├── late_payer_model.joblib            # Serialized trained machine learning model
 ├── requirements.txt                   # Python dependencies
 ├── run.bat                            # Windows 1-click double-click launcher
@@ -73,37 +77,13 @@ Invoice_app/
 
 ---
 
-## 🚀 How to Run the App (Step-by-Step)
+## 🚀 How to Run Locally
 
-### Option A: The Easiest 1-Click Method (Windows)
-Simply double-click **`run.bat`** in this folder! It will activate your Python virtual environment and launch the browser automatically.
-
-### Option B: Terminal / Command Prompt
-Open your terminal in this directory and execute:
+Open your terminal in `Dashboard_1-Invoice_App` and run:
 
 ```powershell
-# 1. Run via the virtual environment directly
+# Run Streamlit dashboard
 .venv\Scripts\streamlit run app.py
 ```
 
-Your browser will automatically open:
-```
-Local URL: http://localhost:8501
-```
-
----
-
-## 🧠 How the Machine Learning Model Works
-
-1. **Input Features**:
-   - `avg_delay`: Customer's past average days late.
-   - `late_rate`: Ratio of past invoices paid late.
-   - `total_past_invs`: Number of prior completed transactions.
-   - `amount`: Dollar value of the current invoice.
-   - `term_days`: Payment terms allowed (e.g. 15, 30, 45, 60 days).
-
-2. **Classification & Output**:
-   The `RandomForestClassifier` calculates the exact probability of delinquency. High probabilities trigger proactive early alerts, preventing cash-flow bottlenecks before they happen.
-
-3. **Continuous Retraining**:
-   Whenever an invoice is marked as Paid, its actual payment delay is saved into `payment_history`. Clicking **"Retrain Model Now"** updates the algorithm with the latest data!
+Or simply double-click **`run.bat`** in Windows Explorer!
