@@ -4,11 +4,13 @@ Handles schema creation, Indian GST/UPI details, CRM communication logs,
 and allows clearing all demo data or seeding realistic INR records.
 """
 
+import os
 import sqlite3
 import datetime
 from typing import List, Dict, Any, Optional
 
-DB_PATH = "invoicing.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "invoicing.db")
 
 def get_connection():
     """Returns a SQLite connection with row_factory set to dict-like rows."""

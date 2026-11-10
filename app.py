@@ -3,6 +3,13 @@ app.py - Invoice & Payment-Reminder Assistant (INR & CRM Edition)
 Main entrypoint and navigation hub for small business cash-flow, CRM follow-ups & payment tracking.
 """
 
+import sys
+import os
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import streamlit as st
 import datetime
 import database

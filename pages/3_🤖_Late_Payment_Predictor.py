@@ -3,6 +3,13 @@ pages/3_🤖_Late_Payment_Predictor.py - Machine Learning Risk Radar & Simulator
 Provides machine learning predictions for late payers, feature explainability, and an interactive sandbox in INR.
 """
 
+import sys
+import os
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px

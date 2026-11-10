@@ -3,6 +3,13 @@ pages/1_📊_Dashboard.py - Executive Accounts Receivable & Cash Flow Dashboard 
 Provides high-level financial metrics in INR (₹), aging analysis, CRM follow-ups, and predictive risk distribution.
 """
 
+import sys
+import os
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px

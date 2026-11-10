@@ -4,10 +4,24 @@ Generates high-converting, polite payment reminders featuring UPI ID, Bank NEFT/
 and 1-click WhatsApp (wa.me) & Email (mailto) deep links.
 """
 
+import os
+import sys
 import urllib.parse
 from datetime import datetime
 from typing import Dict, Any, Optional
-from database import format_inr
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+try:
+    from database import format_inr
+except ImportError:
+    def format_inr(number: float) -> str:
+        try:
+            return f"₹{float(number):,.2f}"
+        except Exception:
+            return f"₹{number}"
 
 TONE_DESCRIPTIONS = {
     "Gentle / Friendly": "Warm, appreciative tone. Best for upcoming invoices or 1-3 days past due.",

@@ -3,6 +3,13 @@ pages/6_🎓_Novice_Step_by_Step_Guide.py - Step-by-Step Novice Learning Guide (
 A complete beginner guide explaining every layer of the application: database, ML, CRM, reminders, and UI in INR.
 """
 
+import sys
+import os
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import streamlit as st
 
 st.set_page_config(page_title="Novice Step-by-Step Guide (INR)", page_icon="🎓", layout="wide")

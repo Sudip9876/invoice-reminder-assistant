@@ -5,6 +5,7 @@ Includes cold-start protection for clean databases and explainable risk factors.
 """
 
 import os
+import sys
 import sqlite3
 import numpy as np
 import pandas as pd
@@ -13,9 +14,21 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 import joblib
 
-from database import get_connection, get_customer_stats, format_inr
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 
-MODEL_FILE = "late_payer_model.joblib"
+try:
+    from database import get_connection, get_customer_stats, format_inr
+except ImportError:
+    from database import get_connection, get_customer_stats
+    def format_inr(number: float) -> str:
+        try:
+            return f"₹{float(number):,.2f}"
+        except Exception:
+            return f"₹{number}"
+
+MODEL_FILE = os.path.join(BASE_DIR, "late_payer_model.joblib")
 
 FEATURE_NAMES = [
     "avg_delay",          # Historical average delay in days
